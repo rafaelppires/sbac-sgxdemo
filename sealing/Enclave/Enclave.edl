@@ -1,0 +1,9 @@
+enclave {
+    untrusted {
+        int ocall_print_string([in, string] const char *str);
+    };
+    trusted {
+        public int ecall_seal_secret([in, string]const char *input, [out, size=out_size]char *output, size_t out_size);
+        public void ecall_unseal([in, size=in_size]const char *buff, size_t in_size);
+    };
+};
