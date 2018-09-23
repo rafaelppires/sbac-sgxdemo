@@ -47,6 +47,8 @@ Result: 0xa180000000000000
 PFN: 0x0
 ```
 
+The virtual address `55a414757000` translated to physical address `0xa180000000000000`.
+
 4. Now, find a virtual address that does belong to the EPC.
 ```
 $ cat /proc/9801/smaps | grep isgx | tail -1
@@ -64,9 +66,11 @@ Result: 0x80000000000000
 Page not present
 ```
 
+The physical address corresponding to the virtual `7f2f5b7ad000` is not present in the translation table.
+
 ## Memory dump
 
-Now, we will try to inspect the enclave memory. If you look in the source `negative\Enclave\Enclave.cpp`, you will find:
+Now, we will try to inspect the enclave memory. If you look in the source `negative/Enclave/Enclave.cpp`, you will find:
 
 ```
 int ecall_compute(int a, int b) {
@@ -95,7 +99,7 @@ $ strings core.9801 | grep sbac-pad
 $
 ```
 
-3. Nothing! So, let's try now to do the same in _simulation mode_, meaning that it only pretends (by using some special libraries) that there it is running a SGX process. So, clean, compile and run.
+3. Nothing! So, let's try now to do the same in _simulation mode_, meaning that it only pretends (by using some special libraries) to run a SGX process in hardware mode. So, clean, compile and run.
 ```
 $ kill 9801
 $ make clean all SGX_MODE=SIM
@@ -161,7 +165,7 @@ $ make clean all && ./app
 $ Enclave says: mac mismatch!
 ```
 
-6. We will try now the signer-based sealing. Edit the file `Enclave\Enclave.cpp`. Make sure the two lines bellow look like this:
+6. We will try now the signer-based sealing. Edit the file `sealing/Enclave/Enclave.cpp`. Make sure the two lines bellow look like this:
 ```
     //std::string sealed = sealEnclave( secret );
     std::string sealed = sealSigner( secret );
@@ -172,18 +176,18 @@ $ Enclave says: mac mismatch!
 $ make clean all && ./app sgx-tutorial-sbac
 $ ./app 
 Enclave says: 'sgx-tutorial-sbac 76'
-$ sed -i 's/\<MAC\>/mac/g' Enclave/Enclave.cpp
+$ sed -i 's/\<mismatch/mIsMaTcH/g' Enclave/Enclave.cpp
 $ make clean all && ./app
 $ Enclave says: 'sgx-tutorial-sbac 76'
 ```
 
-Since the same key was used to sign the enclave code, it still possible to unseal the data in signer-based mode.
+Since the same key was used to sign the enclave code, it is still possible to unseal the data in signer-based mode.
 
 8. Change the private key used to sign the enclave, compile and run again.
 ```
 $ openssl genrsa -out Enclave/private_key.pem -3 3072
 $ make clean all && ./app
-Enclave says: mac mismatch!
+Enclave says: mac mIsMaTcH!
 ```
 
 Since the key has changed, it is not possible to retrieve the content anymore.
