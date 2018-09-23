@@ -2,7 +2,7 @@ SGX_SDK ?= /opt/intel/sgxsdk
 SGX_MODE ?= HW
 SGX_ARCH ?= x64
 SGX_DEBUG ?= 1
-COMMONDIR ?= ../common
+COMMONDIR ?= ../common/untrusted
 
 ifeq ($(shell getconf LONG_BIT), 32)
 	SGX_ARCH := x86
