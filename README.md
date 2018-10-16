@@ -13,7 +13,7 @@ To run SGX processes in hardware mode, one has to setup the PRM (_processor rese
 
 For more details, see:
 - Full explanation [here](https://eprint.iacr.org/2016/086.pdf). 
-- Resumed [here](https://insujang.github.io/2017-04-03/intel-sgx-protection-mechanism/).
+- Abridged [here](https://insujang.github.io/2017-04-03/intel-sgx-protection-mechanism/).
 
 This experiment shows how to perceive that behavior.
 
