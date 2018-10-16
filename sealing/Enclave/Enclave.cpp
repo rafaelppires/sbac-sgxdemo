@@ -23,8 +23,20 @@ int printf(const char *fmt, ...) {
     return ret;
 }
 
+std::string hexmrenclave() {
+    const char *hex = "0123456789abcdef";
+    std::string mre_bin = getmrenclave(), ret;
+    for(int i = 0; i < mre_bin.size(); ++i) {
+        char c = mre_bin[i];
+        ret += hex[(c & 0xf0)>>4];
+        ret += hex[c & 0xf];
+    }
+    return ret;
+}
+
 int ecall_seal_secret(const char *input, char *output, size_t out_size) {
     unsigned int rnd;
+    printf("MRENCLAVE: %s\n", hexmrenclave().c_str());
     sgx_read_rand((unsigned char*)&rnd,sizeof(rnd));
     std::string secret = std::string(input) + " " + std::to_string(rnd % 100);
     std::string sealed = sealEnclave( secret );
@@ -35,6 +47,7 @@ int ecall_seal_secret(const char *input, char *output, size_t out_size) {
 }
 
 void ecall_unseal(const char *buff, size_t in_size) {
+    printf("MRENCLAVE: %s\n", hexmrenclave().c_str());
     try {
         std::string unsealed = unseal( std::string(buff,in_size) );
         printf("'%s'\n", unsealed.c_str());

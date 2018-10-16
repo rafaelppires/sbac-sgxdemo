@@ -1,5 +1,6 @@
 #include "seal.h"
 #include <sgx_tseal.h>
+#include <sgx_utils.h>
 
 static int seal_common( uint16_t policy,
                         const uint8_t *src, size_t srclen, void **sealed ) {
@@ -97,5 +98,12 @@ std::string unseal( const std::string &src ) {
         free( unsealed );
     }
     return ret;
+}
+
+std::string getmrenclave() {
+    sgx_report_t report;
+    sgx_create_report(NULL, NULL, &report);
+    return std::string( (char*)&report.body.mr_enclave,
+                        sizeof(report.body.mr_enclave) );
 }
 
